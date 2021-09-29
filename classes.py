@@ -233,5 +233,4 @@ class Game:
         self.fruit.draw_fruit()
         self.snake.draw_snake()
         self.window.draw_score(len(self.snake.body) - 3, self.fruit.image)
-
         pygame.display.update()
