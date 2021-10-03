@@ -211,6 +211,8 @@ class Game:
                     if self.did_snake_eat():
                         self.snake.play_crunch()
                         self.fruit.randomize_pos()
+                        while self.did_fruit_spawn_on_snake():
+                            self.fruit.randomize_pos()
                         self.snake.ate = True
 
                 if event.type == pygame.KEYDOWN and not already_changed:
@@ -219,6 +221,12 @@ class Game:
 
             self.update()
             self.clock.tick(self.frame_rate)
+
+    def did_fruit_spawn_on_snake(self):
+        for block in self.snake.body:
+            if block == self.fruit.pos:
+                return True
+        return False
 
     def did_snake_eat(self):
         return self.snake.body[0] == self.fruit.pos
