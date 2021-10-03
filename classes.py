@@ -143,7 +143,7 @@ class Window:
         score_rect = score_surface.get_rect(center=(x_pos, y_pos))
         apple_rect = apple.get_rect(midright=(score_rect.left, score_rect.centery))
         background_rect = pygame.Rect(apple_rect.left - 1, apple_rect.top - 3, apple_rect.width + score_rect.width + 5,
-                                      apple_rect.height + 5)
+                                      apple_rect.height + 5)  # I added or subtracted how I thought looked best
 
         pygame.draw.rect(self.screen, (167, 209, 61), background_rect)
         pygame.draw.rect(self.screen, (56, 74, 12), background_rect, 2)
@@ -170,7 +170,7 @@ class Window:
 
 class Game:
     def __init__(self):
-        pygame.mixer.pre_init(44100, -16, 2, 512)
+        pygame.mixer.pre_init(44100, -16, 2, 512)  # I got these numbers from a suggestion online
         pygame.init()
         self.window = Window()
         self.clock = pygame.time.Clock()
