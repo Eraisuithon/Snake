@@ -11,7 +11,7 @@ class Snake:
     def __init__(self, window):
         self.ate = False
 
-        self.body = [Vector2(6, 9), Vector2(6, 10), Vector2(5, 10)]
+        self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
         self.window = window
         self.cell = self.window.cell
         self.direction = Vector2(1, 0)
