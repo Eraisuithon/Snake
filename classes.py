@@ -34,6 +34,11 @@ class Snake:
         self.tail_up = pygame.image.load('Images/tail_up.png').convert_alpha()
         self.tail_down = pygame.image.load('Images/tail_down.png').convert_alpha()
 
+        self.crunch_sound = pygame.mixer.Sound('Sound/crunch.wav')
+
+    def play_crunch(self):
+        self.crunch_sound.play()
+
     def draw_snake(self):
         length = len(self.body)
         for i, block in enumerate(self.body):
@@ -165,6 +170,7 @@ class Window:
 
 class Game:
     def __init__(self):
+        pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.init()
         self.window = Window()
         self.clock = pygame.time.Clock()
@@ -203,6 +209,7 @@ class Game:
                         pygame.quit()
                         exit()
                     if self.did_snake_eat():
+                        self.snake.play_crunch()
                         self.fruit.randomize_pos()
                         self.snake.ate = True
 
