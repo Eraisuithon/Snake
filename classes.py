@@ -137,7 +137,11 @@ class Window:
 
         score_rect = score_surface.get_rect(center=(x_pos, y_pos))
         apple_rect = apple.get_rect(midright=(score_rect.left, score_rect.centery))
+        background_rect = pygame.Rect(apple_rect.left - 1, apple_rect.top - 3, apple_rect.width + score_rect.width + 5,
+                                      apple_rect.height + 5)
 
+        pygame.draw.rect(self.screen, (167, 209, 61), background_rect)
+        pygame.draw.rect(self.screen, (56, 74, 12), background_rect, 2)
         self.screen.blit(score_surface, score_rect)
         self.screen.blit(apple, apple_rect)
 
