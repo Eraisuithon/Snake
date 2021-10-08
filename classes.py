@@ -2,6 +2,8 @@ import pygame
 from sys import exit
 from pygame.math import Vector2
 from random import randint
+import json
+from os.path import isfile
 
 
 # if someone presses two directions really quickly only the first will work
@@ -168,6 +170,17 @@ class Window:
                 pygame.draw.rect(self.screen, grass_color, grass_rect)
 
 
+class File:
+    def __init__(self):
+        self.file_name = 'Scores.txt'
+        self.initialize_file_if_it_is_nonexistant()
+
+    def initialize_file_if_it_is_nonexistant(self):
+        if not isfile('Scores.txt'):
+            with open('Scores.txt', 'w') as file:
+                json.dumps(file, [])
+
+
 class Game:
     def __init__(self):
         pygame.mixer.pre_init(44100, -16, 2, 512)  # I got these numbers from a suggestion online
@@ -181,6 +194,8 @@ class Game:
 
         self.screen_update = pygame.USEREVENT
         pygame.time.set_timer(self.screen_update, 150)
+
+        self.file = File()
 
     def did_lose(self):
         if not 0 <= self.snake.body[0].x < self.window.cell.number or \
@@ -197,6 +212,7 @@ class Game:
         game_over_surface = self.window.font(64).render('GAME OVER', True, (56, 74, 12))
         quit_surface = self.window.font(16).render('To Quit press Q', True, (56, 74, 12))
         retry_surface = self.window.font(16).render('To Retry press R', True, (56, 74, 12))
+        save_score_surface = self.window.font(16).render('To Save Score press S', True, (56, 74, 12))
 
         x_pos = self.window.cell.size * self.window.cell.number / 2
         y_pos = self.window.cell.size * self.window.cell.number / 2
@@ -204,13 +220,16 @@ class Game:
         game_over_rect = game_over_surface.get_rect(midbottom=(x_pos, y_pos))
         quit_rect = quit_surface.get_rect(topright=game_over_rect.bottomright)
         retry_rect = retry_surface.get_rect(topleft=game_over_rect.bottomleft)
-        background_rect = pygame.Rect(self.window.cell.size*5, self.window.cell.size*8, self.window.cell.size*10, self.window.cell.size*3)
+        save_score_rect = save_score_surface.get_rect(topleft=retry_rect.bottomleft)
+        background_rect = pygame.Rect(self.window.cell.size * 5, self.window.cell.size * 8, self.window.cell.size * 10,
+                                      self.window.cell.size * 3)
 
         self.window.draw_grass()
         pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
         self.window.screen.blit(game_over_surface, game_over_rect)
         self.window.screen.blit(quit_surface, quit_rect)
         self.window.screen.blit(retry_surface, retry_rect)
+        self.window.screen.blit(save_score_surface, save_score_rect)
 
         while True:
 
