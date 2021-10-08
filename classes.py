@@ -196,17 +196,23 @@ class Game:
     def game_over(self):
         game_over_surface = self.window.font(64).render('GAME OVER', True, (56, 74, 12))
         quit_surface = self.window.font(16).render('To Quit press Q', True, (56, 74, 12))
+        retry_surface = self.window.font(16).render('To Retry press R', True, (56, 74, 12))
 
         x_pos = self.window.cell.size * self.window.cell.number / 2
         y_pos = self.window.cell.size * self.window.cell.number / 2
 
         game_over_rect = game_over_surface.get_rect(midbottom=(x_pos, y_pos))
         quit_rect = quit_surface.get_rect(topright=game_over_rect.bottomright)
+        retry_rect = retry_surface.get_rect(topleft=game_over_rect.bottomleft)
+        background_rect = pygame.Rect(self.window.cell.size*5, self.window.cell.size*8, self.window.cell.size*10, self.window.cell.size*3)
+
+        self.window.draw_grass()
+        pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
+        self.window.screen.blit(game_over_surface, game_over_rect)
+        self.window.screen.blit(quit_surface, quit_rect)
+        self.window.screen.blit(retry_surface, retry_rect)
 
         while True:
-            self.window.draw_grass()
-            self.window.screen.blit(game_over_surface, game_over_rect)
-            self.window.screen.blit(quit_surface, quit_rect)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -216,6 +222,9 @@ class Game:
                     if event.key == pygame.K_q:
                         pygame.quit()
                         exit()
+                    if event.key == pygame.K_r:
+                        self.__init__()
+                        self.run()
 
             pygame.display.update()
 
