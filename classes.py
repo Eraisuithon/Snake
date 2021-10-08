@@ -193,6 +193,24 @@ class Game:
 
         return False
 
+    def game_over(self):
+        game_over_surface = self.window.font(64).render('GAME OVER', True, (56, 74, 12))
+        x_pos = self.window.cell.size * self.window.cell.number / 2
+        y_pos = self.window.cell.size * self.window.cell.number / 2
+
+        game_over_rect = game_over_surface.get_rect(midbottom=(x_pos, y_pos))
+
+        while True:
+            self.window.draw_grass()
+            self.window.screen.blit(game_over_surface, game_over_rect)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            pygame.display.update()
+
     def run(self):
         already_changed = False
         while True:
@@ -206,6 +224,7 @@ class Game:
                     already_changed = False
                     self.snake.move_snake()
                     if self.did_lose():
+                        self.game_over()
                         pygame.quit()
                         exit()
                     if self.did_snake_eat():
