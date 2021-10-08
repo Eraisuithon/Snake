@@ -178,7 +178,7 @@ class File:
     def initialize_file_if_it_is_nonexistant(self):
         if not isfile('Scores.txt'):
             with open('Scores.txt', 'w') as file:
-                json.dumps(file, [])
+                json.dump([], file)
 
 
 class Game:
