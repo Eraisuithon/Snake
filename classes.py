@@ -186,7 +186,6 @@ class File:
             data = json.load(file)
 
         index = None
-        p = None
         for i, player in enumerate(data):
             if score >= player['Score']:
                 index = i
