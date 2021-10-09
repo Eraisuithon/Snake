@@ -133,9 +133,13 @@ class Window:
 
         self.font = lambda x: pygame.font.Font('Font/PoetsenOne-Regular.ttf', x)
 
+        self.background_color = (175, 215, 70)
+        self.grass_color = (167, 209, 61)
+        self.text_color = (56, 74, 12)
+
     def draw_score(self, score, apple):
         score_text = str(score)
-        score_surface = self.font(25).render(score_text, True, (56, 74, 12))
+        score_surface = self.font(25).render(score_text, True, self.text_color)
         x_pos = self.cell.size * self.cell.number - 60
         y_pos = self.cell.size * self.cell.number - 40
 
@@ -144,13 +148,13 @@ class Window:
         background_rect = pygame.Rect(apple_rect.left - 1, apple_rect.top - 3, apple_rect.width + score_rect.width + 5,
                                       apple_rect.height + 5)  # I added or subtracted how I thought looked best
 
-        pygame.draw.rect(self.screen, (167, 209, 61), background_rect)
-        pygame.draw.rect(self.screen, (56, 74, 12), background_rect, 2)
+        pygame.draw.rect(self.screen, self.background_color, background_rect)
+        pygame.draw.rect(self.screen, self.text_color, background_rect, 2)
         self.screen.blit(score_surface, score_rect)
         self.screen.blit(apple, apple_rect)
 
     def draw_grass(self):
-        grass_color = (167, 209, 61)
+        grass_color = self.grass_color
         grid_size = self.cell.size
         for i in range(0, grid_size, 2):
             for j in range(0, grid_size, 2):
@@ -229,13 +233,14 @@ class Game:
         return False
 
     def show_scores(self):
-        self.window.screen.fill((175, 215, 70))
+        self.window.screen.fill(self.window.background_color)
         self.window.draw_grass()
 
         x_pos = 0
         index = 0
         for player in self.file.data:
-            text_surface = self.window.font(64).render(f"{player['Name']} : {player['Score']}", True, (56, 74, 12))
+            text_surface = self.window.font(64).render(f"{player['Name']} : {player['Score']}", True,
+                                                       self.window.text_color)
 
             cell_size = self.window.cell.size
 
@@ -264,10 +269,10 @@ class Game:
                         exit()
 
     def game_over(self):
-        game_over_surface = self.window.font(64).render('GAME OVER', True, (56, 74, 12))
-        quit_surface = self.window.font(16).render('To Quit press Q', True, (56, 74, 12))
-        retry_surface = self.window.font(16).render('To Retry press R', True, (56, 74, 12))
-        save_score_surface = self.window.font(16).render('To Save Score press S', True, (56, 74, 12))
+        game_over_surface = self.window.font(64).render('GAME OVER', True, self.window.text_color)
+        quit_surface = self.window.font(16).render('To Quit press Q', True, self.window.text_color)
+        retry_surface = self.window.font(16).render('To Retry press R', True, self.window.text_color)
+        save_score_surface = self.window.font(16).render('To Save Score press S', True, self.window.text_color)
 
         x_pos = self.window.cell.size * self.window.cell.number / 2
         y_pos = self.window.cell.size * self.window.cell.number / 2
@@ -281,7 +286,7 @@ class Game:
         background_rect = pygame.Rect(cell_size * 5, cell_size * 8, cell_size * 10, cell_size * 3)
 
         self.window.draw_grass()
-        pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
+        pygame.draw.rect(self.window.screen, self.window.background_color, background_rect)
         self.window.screen.blit(game_over_surface, game_over_rect)
         self.window.screen.blit(quit_surface, quit_rect)
         self.window.screen.blit(retry_surface, retry_rect)
@@ -313,11 +318,11 @@ class Game:
         y_pos = 0
 
         while True:
-            text_surface = self.window.font(32).render(text + inputed_text, True, (56, 74, 12))
+            text_surface = self.window.font(32).render(text + inputed_text, True, self.window.text_color)
 
             text_rect = text_surface.get_rect(topleft=(x_pos, y_pos))
 
-            self.window.screen.fill((175, 215, 70))
+            self.window.screen.fill(self.window.background_color)
             self.window.draw_grass()
             self.window.screen.blit(text_surface, text_rect)
             pygame.display.update()
@@ -339,7 +344,7 @@ class Game:
     def run(self):
         already_changed = False
         while True:
-            self.window.screen.fill((175, 215, 70))
+            self.window.screen.fill(self.window.background_color)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
