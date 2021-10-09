@@ -6,9 +6,6 @@ import json
 from os.path import isfile
 
 
-# if someone presses two directions really quickly only the first will work
-# one way to fix that is if direction can be Vector2(1,1)
-
 class Snake:
     def __init__(self, window):
         self.ate = False
@@ -195,6 +192,9 @@ class File:
         if index is not None:
             self.data.insert(index, {'Name': name, 'Score': score})
 
+        if len(self.data) > 10:
+            self.data = self.data[:-1]
+
         with open('Scores.txt', 'w') as file:
             json.dump(self.data, file)
 
@@ -227,6 +227,43 @@ class Game:
                 return True
 
         return False
+
+    def show_scores(self):
+        self.window.screen.fill((175, 215, 70))
+        self.window.draw_grass()
+
+        x_pos = 0
+        index = 0
+        for player in self.file.data:
+            text_surface = self.window.font(64).render(f"{player['Name']} : {player['Score']}", True, (56, 74, 12))
+
+            cell_size = self.window.cell.size
+
+            y_pos = 2 * index * cell_size
+            index += 1
+
+            text_rect = text_surface.get_rect(topleft=(x_pos, y_pos))
+            background_rect = pygame.Rect(x_pos, y_pos, cell_size * 6, cell_size * 2)
+
+            pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
+            self.window.screen.blit(text_surface, text_rect)
+
+        pygame.display.update()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit()
+                    if event.key == pygame.K_r or event.key == pygame.K_RETURN:
+                        self.__init__()
+                        self.run()
+                        pygame.quit()
+                        exit()
 
     def game_over(self):
         game_over_surface = self.window.font(64).render('GAME OVER', True, (56, 74, 12))
@@ -301,6 +338,7 @@ class Game:
                     elif event.key == pygame.K_RETURN:
                         if len(inputed_text) == 4:
                             self.file.add_to_file(inputed_text, self.score)
+                            self.show_scores()
                     elif len(inputed_text) < 4:
                         inputed_text += event.unicode
 
