@@ -175,10 +175,30 @@ class File:
         self.file_name = 'Scores.txt'
         self.initialize_file_if_it_is_nonexistant()
 
-    def initialize_file_if_it_is_nonexistant(self):
+    @staticmethod
+    def initialize_file_if_it_is_nonexistant():
         if not isfile('Scores.txt'):
             with open('Scores.txt', 'w') as file:
                 json.dump([], file)
+
+    def add_to_file(self, name, score):
+        with open('Scores.txt') as file:
+            data = json.load(file)
+
+        index = None
+        p = None
+        for i, player in enumerate(data):
+            if score >= player['Score']:
+                index = i
+                break
+        else:
+            data.append({'Name': name, 'Score': score})
+
+        if index is not None:
+            data.insert(index, {'Name': name, 'Score': score})
+
+        with open('Scores.txt', 'w') as file:
+            json.dump(data, file)
 
 
 class Game:
@@ -196,6 +216,8 @@ class Game:
         pygame.time.set_timer(self.screen_update, 150)
 
         self.file = File()
+
+        self.score = 0
 
     def did_lose(self):
         if not 0 <= self.snake.body[0].x < self.window.cell.number or \
@@ -221,8 +243,9 @@ class Game:
         quit_rect = quit_surface.get_rect(topright=game_over_rect.bottomright)
         retry_rect = retry_surface.get_rect(topleft=game_over_rect.bottomleft)
         save_score_rect = save_score_surface.get_rect(topleft=retry_rect.bottomleft)
-        background_rect = pygame.Rect(self.window.cell.size * 5, self.window.cell.size * 8, self.window.cell.size * 10,
-                                      self.window.cell.size * 3)
+
+        cell_size = self.window.cell.size
+        background_rect = pygame.Rect(cell_size * 5, cell_size * 8, cell_size * 10, cell_size * 3)
 
         self.window.draw_grass()
         pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
@@ -244,8 +267,44 @@ class Game:
                     if event.key == pygame.K_r:
                         self.__init__()
                         self.run()
+                    if event.key == pygame.K_s:
+                        self.input_score_screen()
 
             pygame.display.update()
+
+    def input_score_screen(self):
+        text = 'Enter your name: '
+        inputed_text = ''
+
+        x_pos = 0
+        y_pos = 0
+
+        cell_size = self.window.cell.size
+        background_rect = pygame.Rect(0, 0, cell_size * 8, cell_size)
+
+        while True:
+            text_surface = self.window.font(32).render(text + inputed_text, True, (56, 74, 12))
+
+            text_rect = text_surface.get_rect(topleft=(x_pos, y_pos))
+
+            self.window.screen.fill((175, 215, 70))
+            self.window.draw_grass()
+            pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
+            self.window.screen.blit(text_surface, text_rect)
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        inputed_text = inputed_text[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if len(inputed_text) == 4:
+                            self.file.add_to_file(inputed_text, self.score)
+                    elif len(inputed_text) < 4:
+                        inputed_text += event.unicode
 
     def run(self):
         already_changed = False
@@ -264,6 +323,8 @@ class Game:
                         pygame.quit()
                         exit()
                     if self.did_snake_eat():
+                        self.score += 1
+
                         self.snake.play_crunch()
                         self.fruit.randomize_pos()
                         while self.did_fruit_spawn_on_snake():
@@ -273,6 +334,11 @@ class Game:
                 if event.type == pygame.KEYDOWN and not already_changed:
                     if self.make_move(event):
                         already_changed = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        self.game_over()
+                        pygame.quit()
+                        exit()
 
             self.update()
             self.clock.tick(self.frame_rate)
@@ -306,5 +372,5 @@ class Game:
         self.window.draw_grass()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
-        self.window.draw_score(len(self.snake.body) - 3, self.fruit.image)
+        self.window.draw_score(self.score, self.fruit.image)
         pygame.display.update()
