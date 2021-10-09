@@ -243,9 +243,7 @@ class Game:
             index += 1
 
             text_rect = text_surface.get_rect(topleft=(x_pos, y_pos))
-            background_rect = pygame.Rect(x_pos, y_pos, cell_size * 6, cell_size * 2)
 
-            pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
             self.window.screen.blit(text_surface, text_rect)
 
         pygame.display.update()
@@ -314,9 +312,6 @@ class Game:
         x_pos = 0
         y_pos = 0
 
-        cell_size = self.window.cell.size
-        background_rect = pygame.Rect(0, 0, cell_size * 8, cell_size)
-
         while True:
             text_surface = self.window.font(32).render(text + inputed_text, True, (56, 74, 12))
 
@@ -324,7 +319,6 @@ class Game:
 
             self.window.screen.fill((175, 215, 70))
             self.window.draw_grass()
-            pygame.draw.rect(self.window.screen, (167, 209, 61), background_rect)
             self.window.screen.blit(text_surface, text_rect)
             pygame.display.update()
 
