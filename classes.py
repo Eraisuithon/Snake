@@ -174,6 +174,8 @@ class File:
     def __init__(self):
         self.file_name = 'Scores.txt'
         self.initialize_file_if_it_is_nonexistant()
+        with open('Scores.txt') as file:
+            self.data = json.load(file)
 
     @staticmethod
     def initialize_file_if_it_is_nonexistant():
@@ -182,22 +184,19 @@ class File:
                 json.dump([], file)
 
     def add_to_file(self, name, score):
-        with open('Scores.txt') as file:
-            data = json.load(file)
-
         index = None
-        for i, player in enumerate(data):
+        for i, player in enumerate(self.data):
             if score >= player['Score']:
                 index = i
                 break
         else:
-            data.append({'Name': name, 'Score': score})
+            self.data.append({'Name': name, 'Score': score})
 
         if index is not None:
-            data.insert(index, {'Name': name, 'Score': score})
+            self.data.insert(index, {'Name': name, 'Score': score})
 
         with open('Scores.txt', 'w') as file:
-            json.dump(data, file)
+            json.dump(self.data, file)
 
 
 class Game:
